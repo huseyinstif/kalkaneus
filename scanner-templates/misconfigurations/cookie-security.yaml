@@ -1,0 +1,30 @@
+id: insecure-cookie-flags
+
+info:
+  name: Insecure Cookie Flags
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects cookies without Secure, HttpOnly, or SameSite flags
+  reference:
+    - https://owasp.org/www-community/controls/SecureCookieAttribute
+  tags: cookie,security,misconfiguration,session
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/login"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "Set-Cookie"
+        
+      - type: dsl
+        dsl:
+          - "!contains(tolower(all_headers), 'secure')"
+          - "!contains(tolower(all_headers), 'httponly')"
+          - "!contains(tolower(all_headers), 'samesite')"
+        condition: or

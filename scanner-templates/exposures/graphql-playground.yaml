@@ -1,0 +1,36 @@
+id: graphql-playground-exposure
+
+info:
+  name: GraphQL Playground Exposure
+  author: Kalkaneus Team
+  severity: info
+  description: Detects publicly accessible GraphQL Playground interface
+  reference:
+    - https://github.com/graphql/graphql-playground
+  tags: exposure,graphql,api,playground
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/graphql"
+      - "{{BaseURL}}/graphiql"
+      - "{{BaseURL}}/playground"
+      - "{{BaseURL}}/api/graphql"
+      - "{{BaseURL}}/api/graphiql"
+      - "{{BaseURL}}/graphql/playground"
+      - "{{BaseURL}}/v1/graphql"
+      - "{{BaseURL}}/v1/graphiql"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "GraphQL Playground"
+          - "GraphiQL"
+          - "graphql-playground"
+          - "__schema"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

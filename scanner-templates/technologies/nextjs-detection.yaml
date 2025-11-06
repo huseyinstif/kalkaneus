@@ -1,0 +1,30 @@
+id: nextjs-detection
+
+info:
+  name: Next.js Framework Detection
+  author: Kalkaneus Team
+  severity: info
+  description: Detects Next.js framework usage
+  reference:
+    - https://nextjs.org/
+  tags: tech,nextjs,react,javascript,framework
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/_next/static/"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "__NEXT_DATA__"
+          - "_next/static"
+          - "next.js"
+          - "__next"
+        condition: or
+        
+      - type: regex
+        regex:
+          - '_next/static/.*\.js'

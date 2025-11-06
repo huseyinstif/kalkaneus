@@ -1,0 +1,30 @@
+id: react-detection
+
+info:
+  name: React Framework Detection
+  author: Kalkaneus Team
+  severity: info
+  description: Detects React.js framework usage
+  reference:
+    - https://reactjs.org/
+  tags: tech,react,javascript,framework
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "__REACT_DEVTOOLS_GLOBAL_HOOK__"
+          - "react-dom"
+          - "data-reactroot"
+          - "data-reactid"
+        condition: or
+        
+      - type: regex
+        regex:
+          - 'react.*\.js'
+          - 'react-dom.*\.js'

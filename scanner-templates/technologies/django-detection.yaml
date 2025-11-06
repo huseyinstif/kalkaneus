@@ -1,0 +1,31 @@
+id: django-detection
+
+info:
+  name: Django Framework Detection
+  author: Kalkaneus Team
+  severity: info
+  description: Detects Django framework usage
+  reference:
+    - https://www.djangoproject.com/
+  tags: tech,django,python,framework
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/admin/"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "csrfmiddlewaretoken"
+          - "Django administration"
+          - "__admin_media_prefix__"
+          - "django"
+        condition: or
+        
+      - type: word
+        part: header
+        words:
+          - "django"

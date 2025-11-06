@@ -1,0 +1,34 @@
+id: prometheus-metrics-exposure
+
+info:
+  name: Prometheus Metrics Exposure
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects exposed Prometheus metrics endpoints
+  reference:
+    - https://prometheus.io/docs/introduction/overview/
+  tags: exposure,prometheus,metrics,monitoring
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/metrics"
+      - "{{BaseURL}}/actuator/prometheus"
+      - "{{BaseURL}}/prometheus"
+      - "{{BaseURL}}/api/metrics"
+      - "{{BaseURL}}:9090/metrics"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "# HELP"
+          - "# TYPE"
+          - "prometheus_"
+          - "_total"
+          - "_count"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

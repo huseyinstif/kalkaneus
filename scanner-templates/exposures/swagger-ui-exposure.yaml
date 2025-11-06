@@ -1,0 +1,38 @@
+id: swagger-ui-exposure
+
+info:
+  name: Swagger UI Exposure
+  author: Kalkaneus Team
+  severity: info
+  description: Detects publicly accessible Swagger UI documentation
+  reference:
+    - https://swagger.io/tools/swagger-ui/
+  tags: exposure,swagger,api,documentation
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/swagger"
+      - "{{BaseURL}}/swagger-ui"
+      - "{{BaseURL}}/swagger-ui.html"
+      - "{{BaseURL}}/api/swagger"
+      - "{{BaseURL}}/api/swagger-ui"
+      - "{{BaseURL}}/api-docs"
+      - "{{BaseURL}}/v2/api-docs"
+      - "{{BaseURL}}/v3/api-docs"
+      - "{{BaseURL}}/swagger/index.html"
+      - "{{BaseURL}}/api/swagger/index.html"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "swagger-ui"
+          - "Swagger UI"
+          - "swagger-editor"
+          - "swaggerUi"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

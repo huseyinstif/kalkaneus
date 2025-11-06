@@ -1,0 +1,29 @@
+id: docker-registry-exposure
+
+info:
+  name: Docker Registry Exposure
+  author: Kalkaneus Team
+  severity: high
+  description: Detects exposed Docker Registry API endpoints
+  reference:
+    - https://docs.docker.com/registry/spec/api/
+  tags: exposure,docker,registry,container
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/v2/"
+      - "{{BaseURL}}/v2/_catalog"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "repositories"
+          - "Docker-Distribution-Api-Version"
+        condition: or
+        
+      - type: status
+        status:
+          - 200
+          - 401

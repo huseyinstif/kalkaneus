@@ -1,0 +1,31 @@
+id: api-rate-limit-missing
+
+info:
+  name: Missing API Rate Limiting
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects API endpoints without proper rate limiting
+  reference:
+    - https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/
+  tags: api,rate-limit,dos,brute-force
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/api/users"
+      - "{{BaseURL}}/api/data"
+      - "{{BaseURL}}/api/search"
+    
+    threads: 50
+    
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - "!contains(tolower(all_headers), 'x-ratelimit-limit')"
+          - "!contains(tolower(all_headers), 'x-rate-limit')"
+          - "!contains(tolower(all_headers), 'ratelimit-limit')"
+        
+      - type: status
+        status:
+          - 200

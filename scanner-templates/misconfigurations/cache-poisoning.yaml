@@ -1,0 +1,35 @@
+id: cache-poisoning-vulnerability
+
+info:
+  name: Web Cache Poisoning Vulnerability
+  author: Kalkaneus Team
+  severity: high
+  description: Detects potential web cache poisoning vulnerabilities
+  reference:
+    - https://portswigger.net/web-security/web-cache-poisoning
+  tags: cache-poisoning,misconfiguration,cache
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    headers:
+      X-Forwarded-Host: evil.com
+      X-Forwarded-Scheme: http
+      X-Original-URL: /admin
+      X-Rewrite-URL: /admin
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "evil.com"
+        
+      - type: word
+        part: header
+        words:
+          - "X-Cache: HIT"
+          - "X-Cache-Status: HIT"
+          - "CF-Cache-Status: HIT"
+        condition: or

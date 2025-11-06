@@ -1,0 +1,35 @@
+id: kubernetes-api-exposure
+
+info:
+  name: Kubernetes API Server Exposure
+  author: Kalkaneus Team
+  severity: critical
+  description: Detects exposed Kubernetes API server endpoints
+  reference:
+    - https://kubernetes.io/docs/concepts/security/
+  tags: exposure,kubernetes,k8s,api,container
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/api"
+      - "{{BaseURL}}/api/v1"
+      - "{{BaseURL}}/apis"
+      - "{{BaseURL}}/version"
+      - "{{BaseURL}}/healthz"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "APIVersion"
+          - "kind"
+          - "kubernetes"
+          - "serverVersion"
+        condition: or
+        
+      - type: status
+        status:
+          - 200
+          - 401
+          - 403

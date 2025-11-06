@@ -1,0 +1,32 @@
+id: oauth-redirect-uri-manipulation
+
+info:
+  name: OAuth Redirect URI Manipulation
+  author: Kalkaneus Team
+  severity: high
+  description: Detects OAuth implementations vulnerable to redirect_uri manipulation
+  reference:
+    - https://portswigger.net/web-security/oauth
+  tags: oauth,authentication,redirect,authorization
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/oauth/authorize?client_id=test&redirect_uri=https://evil.com&response_type=code"
+      - "{{BaseURL}}/oauth2/authorize?client_id=test&redirect_uri=https://evil.com&response_type=code"
+      - "{{BaseURL}}/auth/oauth?client_id=test&redirect_uri=https://evil.com&response_type=code"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "evil.com"
+          - "redirect"
+          - "location"
+        condition: or
+        
+      - type: status
+        status:
+          - 302
+          - 301
+          - 200

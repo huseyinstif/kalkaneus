@@ -1,0 +1,26 @@
+id: hsts-missing
+
+info:
+  name: Missing HTTP Strict Transport Security (HSTS)
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects missing HSTS header which can lead to SSL stripping attacks
+  reference:
+    - https://owasp.org/www-community/Security_Headers
+    - https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html
+  tags: hsts,security-headers,misconfiguration,ssl
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - "!contains(tolower(all_headers), 'strict-transport-security')"
+        
+      - type: status
+        status:
+          - 200

