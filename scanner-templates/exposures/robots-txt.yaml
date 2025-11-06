@@ -1,0 +1,36 @@
+id: robots-txt-exposure
+
+info:
+  name: robots.txt Information Disclosure
+  author: Kalkaneus Team
+  severity: info
+  description: Detects robots.txt file with sensitive paths
+  reference:
+    - https://www.robotstxt.org/
+  tags: exposure,robots,information-disclosure
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/robots.txt"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "Disallow:"
+          - "User-agent:"
+        condition: and
+        
+      - type: word
+        words:
+          - "/admin"
+          - "/backup"
+          - "/private"
+          - "/secret"
+          - "/config"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,42 @@
+id: unrestricted-file-upload
+
+info:
+  name: Unrestricted File Upload
+  author: Kalkaneus Team
+  severity: critical
+  description: Detects unrestricted file upload vulnerabilities
+  reference:
+    - https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload
+  tags: file-upload,rce
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/upload"
+      - "{{BaseURL}}/upload.php"
+      - "{{BaseURL}}/fileupload"
+    
+    headers:
+      Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+    
+    body: |
+      ------WebKitFormBoundary
+      Content-Disposition: form-data; name="file"; filename="shell.php"
+      Content-Type: application/x-php
+      
+      <?php echo "test"; ?>
+      ------WebKitFormBoundary--
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "uploaded successfully"
+          - "file uploaded"
+          - "upload complete"
+        condition: or
+        
+      - type: status
+        status:
+          - 200
+          - 201

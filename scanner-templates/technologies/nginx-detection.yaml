@@ -1,0 +1,21 @@
+id: nginx-detection
+
+info:
+  name: Nginx Web Server Detection
+  author: Kalkaneus Team
+  severity: info
+  description: Detects Nginx web server and version
+  reference:
+    - https://nginx.org/
+  tags: tech,nginx,detection,webserver
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "Server: nginx"

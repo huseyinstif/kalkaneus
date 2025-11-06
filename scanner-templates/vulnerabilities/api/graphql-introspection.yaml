@@ -1,0 +1,34 @@
+id: graphql-introspection
+
+info:
+  name: GraphQL Introspection Enabled
+  author: Kalkaneus Team
+  severity: info
+  description: Detects enabled GraphQL introspection
+  reference:
+    - https://graphql.org/learn/introspection/
+  tags: graphql,api,introspection
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/graphql"
+      - "{{BaseURL}}/api/graphql"
+    
+    headers:
+      Content-Type: application/json
+    
+    body: |
+      {"query": "{ __schema { types { name } } }"}
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "__schema"
+          - "types"
+        condition: and
+        
+      - type: status
+        status:
+          - 200

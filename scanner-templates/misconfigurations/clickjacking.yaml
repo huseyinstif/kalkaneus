@@ -1,0 +1,28 @@
+id: clickjacking-no-x-frame-options
+
+info:
+  name: Clickjacking - Missing X-Frame-Options
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects pages vulnerable to clickjacking due to missing X-Frame-Options header
+  reference:
+    - https://owasp.org/www-community/attacks/Clickjacking
+  tags: clickjacking,x-frame-options,misconfiguration
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/login"
+      - "{{BaseURL}}/admin"
+    
+    matchers-condition: and
+    matchers:
+      - type: dsl
+        dsl:
+          - "!contains(tolower(all_headers), 'x-frame-options')"
+          - "!contains(tolower(all_headers), 'content-security-policy')"
+        
+      - type: status
+        status:
+          - 200

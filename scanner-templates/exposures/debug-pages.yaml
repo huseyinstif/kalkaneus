@@ -1,0 +1,39 @@
+id: debug-pages-exposure
+
+info:
+  name: Debug/Test Pages Exposure
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects exposed debug and test pages
+  reference:
+    - https://owasp.org/www-project-web-security-testing-guide/
+  tags: exposure,debug,test-pages
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/debug"
+      - "{{BaseURL}}/test"
+      - "{{BaseURL}}/debug.php"
+      - "{{BaseURL}}/test.php"
+      - "{{BaseURL}}/phpinfo.php"
+      - "{{BaseURL}}/info.php"
+      - "{{BaseURL}}/debug.log"
+      - "{{BaseURL}}/error.log"
+      - "{{BaseURL}}/errors.log"
+      - "{{BaseURL}}/application.log"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "debug"
+          - "test"
+          - "error"
+          - "exception"
+          - "stack trace"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

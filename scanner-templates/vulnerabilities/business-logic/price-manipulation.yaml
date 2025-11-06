@@ -1,0 +1,37 @@
+id: price-manipulation
+
+info:
+  name: Price Manipulation
+  author: Kalkaneus Team
+  severity: high
+  description: Detects price manipulation vulnerabilities
+  reference:
+    - https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/
+  tags: business-logic,price,manipulation
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/checkout"
+      - "{{BaseURL}}/cart/update"
+      - "{{BaseURL}}/api/order"
+    
+    headers:
+      Content-Type: application/json
+    
+    body: |
+      {"item_id": 1, "price": 0.01, "quantity": 1}
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "success"
+          - "order placed"
+          - "payment successful"
+        condition: or
+        
+      - type: status
+        status:
+          - 200
+          - 201

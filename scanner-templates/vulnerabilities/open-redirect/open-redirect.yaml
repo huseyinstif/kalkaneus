@@ -1,0 +1,43 @@
+id: open-redirect
+
+info:
+  name: Open Redirect
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects open redirect vulnerabilities
+  reference:
+    - https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html
+  tags: redirect,open-redirect
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}https://evil.com"
+      - "{{BaseURL}}{{Path}}//evil.com"
+      - "{{BaseURL}}{{Path}}/\\/evil.com"
+      - "{{BaseURL}}{{Path}}@evil.com"
+    
+    payloads:
+      Path:
+        - "?url="
+        - "?redirect="
+        - "?next="
+        - "?return="
+        - "?goto="
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "Location: https://evil.com"
+          - "Location: //evil.com"
+        condition: or
+        
+      - type: status
+        status:
+          - 301
+          - 302
+          - 303
+          - 307
+          - 308

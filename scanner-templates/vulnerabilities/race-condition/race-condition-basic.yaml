@@ -1,0 +1,30 @@
+id: race-condition-basic
+
+info:
+  name: Race Condition - Basic
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects potential race condition vulnerabilities
+  reference:
+    - https://owasp.org/www-community/vulnerabilities/Race_Conditions
+  tags: race-condition,timing
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/api/transfer"
+      - "{{BaseURL}}/api/purchase"
+      - "{{BaseURL}}/api/redeem"
+    
+    headers:
+      Content-Type: application/json
+    
+    body: |
+      {"amount": 100}
+    
+    threads: 10
+    
+    matchers:
+      - type: status
+        status:
+          - 200

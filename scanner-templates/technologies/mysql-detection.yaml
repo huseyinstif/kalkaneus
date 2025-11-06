@@ -1,0 +1,23 @@
+id: mysql-detection
+
+info:
+  name: MySQL Database Detection
+  author: Kalkaneus Team
+  severity: info
+  description: Detects MySQL database through error messages
+  reference:
+    - https://www.mysql.com/
+  tags: tech,mysql,database,detection
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}?id=1'"
+    
+    matchers:
+      - type: word
+        words:
+          - "mysql"
+          - "MySQL"
+          - "mysqli"
+        condition: or

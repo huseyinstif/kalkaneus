@@ -1,0 +1,39 @@
+id: phpinfo-exposure
+
+info:
+  name: PHPInfo Exposure
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects exposed phpinfo() pages
+  reference:
+    - https://www.php.net/manual/en/function.phpinfo.php
+  tags: exposure,phpinfo,information-disclosure
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/phpinfo.php"
+      - "{{BaseURL}}/info.php"
+      - "{{BaseURL}}/test.php"
+      - "{{BaseURL}}/php.php"
+      - "{{BaseURL}}/infophp.php"
+      - "{{BaseURL}}/information.php"
+      - "{{BaseURL}}/i.php"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "PHP Version"
+          - "phpinfo()"
+        condition: and
+        
+      - type: word
+        words:
+          - "System"
+          - "Build Date"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

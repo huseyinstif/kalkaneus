@@ -1,0 +1,40 @@
+id: backup-files-exposure
+
+info:
+  name: Backup Files Exposure
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects exposed backup files
+  reference:
+    - https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload
+  tags: exposure,backup,files
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/backup.zip"
+      - "{{BaseURL}}/backup.tar.gz"
+      - "{{BaseURL}}/backup.sql"
+      - "{{BaseURL}}/database.sql"
+      - "{{BaseURL}}/db.sql"
+      - "{{BaseURL}}/dump.sql"
+      - "{{BaseURL}}/site.zip"
+      - "{{BaseURL}}/www.zip"
+      - "{{BaseURL}}/backup.tar"
+      - "{{BaseURL}}/backup.rar"
+    
+    matchers-condition: and
+    matchers:
+      - type: status
+        status:
+          - 200
+          
+      - type: word
+        part: header
+        words:
+          - "application/zip"
+          - "application/x-gzip"
+          - "application/x-tar"
+          - "application/sql"
+          - "application/octet-stream"
+        condition: or

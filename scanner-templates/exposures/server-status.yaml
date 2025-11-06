@@ -1,0 +1,29 @@
+id: apache-server-status
+
+info:
+  name: Apache Server Status Exposure
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects exposed Apache server-status page
+  reference:
+    - https://httpd.apache.org/docs/2.4/mod/mod_status.html
+  tags: exposure,apache,server-status
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/server-status"
+      - "{{BaseURL}}/status"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "Apache Server Status"
+          - "Server Version:"
+          - "Server Built:"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

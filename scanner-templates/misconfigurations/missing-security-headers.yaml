@@ -1,0 +1,25 @@
+id: missing-security-headers
+
+info:
+  name: Missing Security Headers
+  author: Kalkaneus Team
+  severity: info
+  description: Detects missing security headers
+  reference:
+    - https://owasp.org/www-project-secure-headers/
+  tags: misconfiguration,security-headers,headers
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers-condition: or
+    matchers:
+      - type: dsl
+        dsl:
+          - "!contains(tolower(all_headers), 'x-frame-options')"
+          - "!contains(tolower(all_headers), 'x-content-type-options')"
+          - "!contains(tolower(all_headers), 'strict-transport-security')"
+          - "!contains(tolower(all_headers), 'content-security-policy')"
+          - "!contains(tolower(all_headers), 'x-xss-protection')"

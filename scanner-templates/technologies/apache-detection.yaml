@@ -1,0 +1,21 @@
+id: apache-detection
+
+info:
+  name: Apache Web Server Detection
+  author: Kalkaneus Team
+  severity: info
+  description: Detects Apache web server and version
+  reference:
+    - https://httpd.apache.org/
+  tags: tech,apache,detection,webserver
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "Server: Apache"

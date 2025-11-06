@@ -1,0 +1,34 @@
+id: sitemap-xml-exposure
+
+info:
+  name: sitemap.xml Exposure
+  author: Kalkaneus Team
+  severity: info
+  description: Detects sitemap.xml file
+  reference:
+    - https://www.sitemaps.org/
+  tags: exposure,sitemap,information-disclosure
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/sitemap.xml"
+      - "{{BaseURL}}/sitemap_index.xml"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<urlset"
+          - "<sitemap"
+          - "<loc>"
+        condition: or
+        
+      - type: word
+        part: header
+        words:
+          - "xml"
+        
+      - type: status
+        status:
+          - 200

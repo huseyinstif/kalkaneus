@@ -1,0 +1,26 @@
+id: dangerous-http-methods
+
+info:
+  name: Dangerous HTTP Methods Enabled
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects dangerous HTTP methods like PUT, DELETE, TRACE
+  reference:
+    - https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/06-Test_HTTP_Methods
+  tags: misconfiguration,http-methods
+
+http:
+  - method: OPTIONS
+    path:
+      - "{{BaseURL}}"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "PUT"
+          - "DELETE"
+          - "TRACE"
+          - "CONNECT"
+        condition: or

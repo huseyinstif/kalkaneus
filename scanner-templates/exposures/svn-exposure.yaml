@@ -1,0 +1,30 @@
+id: svn-exposure
+
+info:
+  name: SVN Repository Exposure
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects exposed SVN repositories
+  reference:
+    - https://subversion.apache.org/
+  tags: exposure,svn,version-control
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/.svn/entries"
+      - "{{BaseURL}}/.svn/wc.db"
+      - "{{BaseURL}}/.svn/all-wcprops"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "svn:"
+          - "dir"
+          - "file"
+        condition: or
+        
+      - type: status
+        status:
+          - 200

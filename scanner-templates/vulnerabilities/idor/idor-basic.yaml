@@ -1,0 +1,26 @@
+id: idor-basic
+
+info:
+  name: Insecure Direct Object Reference (IDOR)
+  author: Kalkaneus Team
+  severity: high
+  description: Detects potential IDOR vulnerabilities
+  reference:
+    - https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References
+  tags: idor,authorization,access-control
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/user/profile?id=1"
+      - "{{BaseURL}}/user/profile?id=2"
+      - "{{BaseURL}}/api/user/1"
+      - "{{BaseURL}}/api/user/2"
+      - "{{BaseURL}}/document?id=1"
+      - "{{BaseURL}}/document?id=2"
+    
+    matchers:
+      - type: dsl
+        dsl:
+          - "status_code_1 == 200 && status_code_2 == 200"
+          - "len(body_1) > 100 && len(body_2) > 100"

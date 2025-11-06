@@ -1,0 +1,32 @@
+id: xpath-injection
+
+info:
+  name: XPath Injection
+  author: Kalkaneus Team
+  severity: high
+  description: Detects XPath injection vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/XPATH_Injection
+  tags: xpath,injection,xml
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}' or '1'='1"
+      - "{{BaseURL}}{{Path}}' or 1=1 or ''='"
+      - "{{BaseURL}}{{Path}}x' or 1=1 or 'x'='y"
+    
+    payloads:
+      Path:
+        - "?user="
+        - "?username="
+        - "?search="
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "XPathException"
+          - "XPath syntax error"
+          - "SimpleXMLElement"
+        condition: or

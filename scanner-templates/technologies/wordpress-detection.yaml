@@ -1,0 +1,31 @@
+id: wordpress-detection
+
+info:
+  name: WordPress Detection
+  author: Kalkaneus Team
+  severity: info
+  description: Detects WordPress CMS
+  reference:
+    - https://wordpress.org/
+  tags: tech,wordpress,cms,detection
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/wp-login.php"
+      - "{{BaseURL}}/wp-admin/"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "wp-content"
+          - "wp-includes"
+          - "WordPress"
+        condition: or
+        
+      - type: word
+        part: header
+        words:
+          - "wordpress"

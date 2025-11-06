@@ -1,0 +1,32 @@
+id: csrf-no-token
+
+info:
+  name: CSRF - Missing Token
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects forms without CSRF tokens
+  reference:
+    - https://owasp.org/www-community/attacks/csrf
+  tags: csrf,token,form
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/login"
+      - "{{BaseURL}}/register"
+      - "{{BaseURL}}/contact"
+      - "{{BaseURL}}/profile"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "<form"
+          - "method="
+        condition: and
+        
+      - type: dsl
+        dsl:
+          - "!contains(body, 'csrf')"
+          - "!contains(body, '_token')"
+          - "!contains(body, 'authenticity_token')"

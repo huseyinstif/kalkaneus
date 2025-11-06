@@ -1,0 +1,29 @@
+id: ssti-basic
+
+info:
+  name: Server-Side Template Injection (SSTI)
+  author: Kalkaneus Team
+  severity: critical
+  description: Detects SSTI vulnerabilities
+  reference:
+    - https://portswigger.net/research/server-side-template-injection
+  tags: ssti,injection,template
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}{{7*7}}"
+      - "{{BaseURL}}{{Path}}${{7*7}}"
+      - "{{BaseURL}}{{Path}}{{'{{'}}7*7{{'}}'}}"
+      - "{{BaseURL}}{{Path}}<%= 7*7 %>"
+    
+    payloads:
+      Path:
+        - "?name="
+        - "?template="
+        - "?page="
+    
+    matchers:
+      - type: word
+        words:
+          - "49"

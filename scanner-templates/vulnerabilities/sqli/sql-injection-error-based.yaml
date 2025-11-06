@@ -1,0 +1,55 @@
+id: sql-injection-error-based
+
+info:
+  name: SQL Injection - Error Based
+  author: Kalkaneus Team
+  severity: high
+  description: Detects SQL injection vulnerabilities through error messages
+  reference:
+    - https://owasp.org/www-community/attacks/SQL_Injection
+  tags: sqli,injection,database
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}'"
+      - "{{BaseURL}}{{Path}}%27"
+    
+    payloads:
+      Path:
+        - "?id=1"
+        - "?user=admin"
+        - "?search=test"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "SQL syntax"
+          - "mysql_fetch"
+          - "ORA-01756"
+          - "PostgreSQL.*ERROR"
+          - "Warning.*mysql"
+          - "valid MySQL result"
+          - "MySqlClient"
+          - "SQLServer JDBC Driver"
+        condition: or
+        
+      - type: regex
+        regex:
+          - "SQL syntax.*MySQL"
+          - "Warning.*mysql_.*"
+          - "valid MySQL result"
+          - "MySqlClient\\."
+          - "PostgreSQL.*ERROR"
+          - "Warning.*\\Wpg_.*"
+          - "valid PostgreSQL result"
+          - "Npgsql\\."
+          - "Driver.*SQL[-_ ]*Server"
+          - "OLE DB.*SQL Server"
+          - "\\bSQL Server[^&lt;&quot;]+Driver"
+          - "Warning.*mssql_.*"
+          - "\\bSQL Server[^&lt;&quot;]+[0-9a-fA-F]{8}"
+          - "System\\.Data\\.SqlClient\\.SqlException"
+          - "(?s)Exception.*\\WSystem\\.Data\\.SqlClient\\."
+          - "(?s)Exception.*\\WRoadhouse\\.Cms\\."

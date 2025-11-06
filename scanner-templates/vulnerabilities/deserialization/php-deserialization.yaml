@@ -1,0 +1,31 @@
+id: php-deserialization
+
+info:
+  name: PHP Deserialization
+  author: Kalkaneus Team
+  severity: critical
+  description: Detects PHP deserialization vulnerabilities
+  reference:
+    - https://owasp.org/www-community/vulnerabilities/PHP_Object_Injection
+  tags: deserialization,php,rce
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}O:8:\"stdClass\":0:{}"
+      - "{{BaseURL}}{{Path}}a:1:{i:0;s:4:\"test\";}"
+    
+    payloads:
+      Path:
+        - "?data="
+        - "?object="
+        - "?session="
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "unserialize()"
+          - "Notice: unserialize"
+          - "__wakeup"
+        condition: or

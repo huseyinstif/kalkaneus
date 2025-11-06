@@ -1,0 +1,30 @@
+id: session-fixation
+
+info:
+  name: Session Fixation
+  author: Kalkaneus Team
+  severity: high
+  description: Detects session fixation vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/Session_fixation
+  tags: session,fixation,authentication
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/login?PHPSESSID=attacker_session"
+      - "{{BaseURL}}/login?session_id=attacker_session"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "Set-Cookie"
+        
+      - type: word
+        part: header
+        words:
+          - "PHPSESSID=attacker_session"
+          - "session_id=attacker_session"
+        condition: or

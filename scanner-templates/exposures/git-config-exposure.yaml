@@ -1,0 +1,35 @@
+id: git-config-exposure
+
+info:
+  name: Git Config File Exposure
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects exposed .git/config files
+  reference:
+    - https://github.com/internetwache/GitTools
+  tags: exposure,git,config
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/.git/config"
+      - "{{BaseURL}}/.git/HEAD"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        words:
+          - "[core]"
+          - "repositoryformatversion"
+        condition: and
+        
+      - type: status
+        status:
+          - 200
+          
+      - type: word
+        part: header
+        words:
+          - "application/octet-stream"
+          - "text/plain"
+        condition: or

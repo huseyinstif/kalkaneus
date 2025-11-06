@@ -1,0 +1,22 @@
+id: weak-ssl-tls
+
+info:
+  name: Weak SSL/TLS Configuration
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects weak SSL/TLS configurations
+  reference:
+    - https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/01-Testing_for_Weak_Transport_Layer_Security
+  tags: ssl,tls,crypto,misconfiguration
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers:
+      - type: dsl
+        dsl:
+          - "contains(tolower(tls_version), 'tls 1.0')"
+          - "contains(tolower(tls_version), 'tls 1.1')"
+          - "contains(tolower(tls_version), 'ssl')"

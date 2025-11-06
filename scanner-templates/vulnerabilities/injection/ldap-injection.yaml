@@ -1,0 +1,32 @@
+id: ldap-injection
+
+info:
+  name: LDAP Injection
+  author: Kalkaneus Team
+  severity: high
+  description: Detects LDAP injection vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/LDAP_Injection
+  tags: ldap,injection
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}*"
+      - "{{BaseURL}}{{Path}}*)(&"
+      - "{{BaseURL}}{{Path}}*)(|(password=*))"
+    
+    payloads:
+      Path:
+        - "?user="
+        - "?username="
+        - "?search="
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "LDAP"
+          - "javax.naming"
+          - "LdapException"
+        condition: or

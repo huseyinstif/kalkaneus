@@ -1,0 +1,36 @@
+id: acuart-xss
+
+info:
+  name: Acuart (testphp.vulnweb.com) - XSS
+  author: Kalkaneus Team
+  severity: medium
+  description: Cross-site scripting in Acuart demo application
+  reference:
+    - http://testphp.vulnweb.com/
+  tags: xss,acuart,testphp
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/search.php?test=query"
+      - "{{BaseURL}}/search.php?test=<script>alert(1)</script>"
+      - "{{BaseURL}}/artists.php?artist=<script>alert(1)</script>"
+      - "{{BaseURL}}/listproducts.php?cat=<script>alert(1)</script>"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "<script>alert(1)</script>"
+          - "test=query"
+        condition: or
+        
+      - type: word
+        part: header
+        words:
+          - "text/html"
+        
+      - type: status
+        status:
+          - 200

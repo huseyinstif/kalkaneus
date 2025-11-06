@@ -1,0 +1,31 @@
+id: php-detection
+
+info:
+  name: PHP Technology Detection
+  author: Kalkaneus Team
+  severity: info
+  description: Detects PHP technology and version
+  reference:
+    - https://www.php.net/
+  tags: tech,php,detection
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "X-Powered-By: PHP"
+          - "Server: PHP"
+        condition: or
+        
+      - type: word
+        part: body
+        words:
+          - ".php"
+          - "PHPSESSID"
+        condition: or

@@ -1,0 +1,42 @@
+id: xss-dom-based
+
+info:
+  name: Cross-Site Scripting (XSS) - DOM Based
+  author: Kalkaneus Team
+  severity: medium
+  description: Detects DOM-based XSS vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/DOM_Based_XSS
+  tags: xss,dom,javascript,injection
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}#<script>alert(1)</script>"
+      - "{{BaseURL}}{{Path}}#<img src=x onerror=alert(1)>"
+      - "{{BaseURL}}{{Path}}#javascript:alert(1)"
+    
+    payloads:
+      Path:
+        - "/"
+        - "/index.php"
+        - "/search"
+    
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: body
+        words:
+          - "document.location"
+          - "window.location"
+          - "document.URL"
+          - "document.documentURI"
+        condition: or
+        
+      - type: word
+        part: body
+        words:
+          - "<script>"
+          - "innerHTML"
+          - "document.write"
+        condition: or

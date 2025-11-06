@@ -1,0 +1,20 @@
+id: example-test
+
+info:
+  name: Example Test Template
+  author: Kalkaneus
+  severity: info
+  description: This is an example test template to verify template loading
+  tags: test,example,demo
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+    
+    matchers:
+      - type: status
+        status:
+          - 200
+          - 301
+          - 302

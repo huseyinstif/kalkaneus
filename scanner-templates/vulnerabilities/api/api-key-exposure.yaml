@@ -1,0 +1,28 @@
+id: api-key-exposure
+
+info:
+  name: API Key Exposure
+  author: Kalkaneus Team
+  severity: high
+  description: Detects exposed API keys in responses
+  reference:
+    - https://owasp.org/www-project-api-security/
+  tags: api,api-key,exposure,credentials
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+      - "{{BaseURL}}/config.js"
+      - "{{BaseURL}}/app.js"
+      - "{{BaseURL}}/main.js"
+    
+    matchers-condition: or
+    matchers:
+      - type: regex
+        regex:
+          - "api[_-]?key['\"]?\\s*[:=]\\s*['\"]([a-zA-Z0-9_\\-]{20,})"
+          - "apikey['\"]?\\s*[:=]\\s*['\"]([a-zA-Z0-9_\\-]{20,})"
+          - "api[_-]?secret['\"]?\\s*[:=]\\s*['\"]([a-zA-Z0-9_\\-]{20,})"
+          - "AKIA[0-9A-Z]{16}"
+          - "AIza[0-9A-Za-z\\-_]{35}"

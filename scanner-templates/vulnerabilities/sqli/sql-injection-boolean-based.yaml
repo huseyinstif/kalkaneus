@@ -1,0 +1,30 @@
+id: sql-injection-boolean-based
+
+info:
+  name: SQL Injection - Boolean Based Blind
+  author: Kalkaneus Team
+  severity: high
+  description: Detects boolean-based blind SQL injection
+  reference:
+    - https://owasp.org/www-community/attacks/Blind_SQL_Injection
+  tags: sqli,blind,boolean,injection
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}{{Path}}' AND '1'='1"
+      - "{{BaseURL}}{{Path}}' AND '1'='2"
+      - "{{BaseURL}}{{Path}}' OR '1'='1"
+      - "{{BaseURL}}{{Path}}' AND 1=1--"
+      - "{{BaseURL}}{{Path}}' AND 1=2--"
+    
+    payloads:
+      Path:
+        - "?id=1"
+        - "?cat=1"
+        - "?artist=1"
+    
+    matchers:
+      - type: dsl
+        dsl:
+          - "contains(body_1, 'expected_content') && !contains(body_2, 'expected_content')"
